@@ -1,6 +1,6 @@
 # Project Title
 
-This project contains my solution to the Truss exercise
+This project contains my solution to the Truss exercise  
 
 ## Getting Started
 
@@ -9,14 +9,14 @@ This project contains my solution to the Truss exercise
 ### Prerequisites
 
 You will need Java 8 and Groovy
-I use sdkman to install and manage versions. If you don't have sdkman, see https://sdkman.io/install to install
-sdk install java 8u111
-sdk install groovy 2.5.5
+I use sdkman to install and manage versions. If you don't have sdkman, see https://sdkman.io/install to install  
+sdk install java 8u111  
+sdk install groovy 2.5.5  
 
 
 ### Installing
 
-A step by step series of examples that tell you how to get a development env running
+A step by step series of examples that tell you how to get a development env running  
 
 Say what the step will be
 
@@ -40,7 +40,5 @@ Explain how to run the automated tests for this system
 ## Authors
 
 * **Ed Delaney** 
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
 
 
