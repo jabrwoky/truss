@@ -16,15 +16,12 @@ sdk install groovy 2.5.5
 
 ### Installing
 
-A step by step series of examples that tell you how to get a development env running  
+If you have issues with downloading grapes for commons-logging, clear your groovy grapes
+rm -rf  ~/.groovy/grapes/commons-logging/
+You may have to repeat this before all the dependencies get resolved
+You can get more debugging information about dependency resolution by turning up the logging
 
-Say what the step will be
-
-```
-Give the example
-```
-
-And repeat
+export JAVA_OPTS="-Dgroovy.grape.report.downloads=true -Divy.message.logger.level=4"
 
 ```
 until finished
