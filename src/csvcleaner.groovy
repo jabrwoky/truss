@@ -1,60 +1,58 @@
+@Grab('com.opencsv:opencsv:4.0')
+import com.opencsv.CSVWriter
+@Grab('com.opencsv:opencsv:4.0')
+import com.opencsv.CSVWriter
 @Grab('com.xlson.groovycsv:groovycsv:1.3')
 import com.xlson.groovycsv.CsvParser
 @Grab('com.xlson.groovycsv:groovycsv:1.3')
 import com.xlson.groovycsv.CsvParser
 
 import java.time.Duration
-import java.time.Instant
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
-String filePath = "/home/ed/projects/truss/doc/sample-with-broken-utf8.csv"
+//String filePath = "/home/ed/projects/truss/doc/sample-with-broken-utf8.csv"
+String filePath = "/home/ed/projects/truss/doc/sample.csv"
 File file = new File(filePath)
 BufferedReader br = null
 br = new BufferedReader(new FileReader(file))
 def csvData = CsvParser.parseCsv(br)
-/*
-println "Timestamp\t" +
-        "Address\t" +
-        "ZIP\t" +
-        "FullName\t" +
-        "FooDuration\t" +
-        "BarDuration\t" +
-        "TotalDuration\t" +
-        "Notes"
-*/
-def outputMap = [:]
-Instant instant = Instant.now()
-//println "NOW: " + instant.toString()
+//println "csvData      : " + csvData.size()
+String headerLine = "Timestamp,Address,ZIP,FullName,FooDuration,BarDuration,TotalDuration,Notes"
 
-csvData.each {
+def outputMap = [:]
+def outputSet = []
+csvData.eachWithIndex {it, i ->
+    println "----------  ${i}  --------"
     outputMap['Timestamp'] = timeStringToIso(it.Timestamp)
     outputMap['Address'] = it.Address
     outputMap['ZIP'] = it.ZIP.padLeft(5, '0')
     outputMap['FullName'] = it.FullName.toUpperCase()
     outputMap['FooDuration'] = convertDuration(it.FooDuration)
-    //println "fooduration     :" + formatDuration(it.FooDuration)
     outputMap['BarDuration'] = convertDuration(it.BarDuration)
     outputMap['TotalDuration'] = sumDurations(it.FooDuration, it.BarDuration)
-    //outputMap['Notes'] = checkUTF8(it.Notes)
-
-
-    /*outputMap['Timestamp'] = it.Timestamp
-    outputMap['Address'] = it.Address
-    outputMap['ZIP'] = it.ZIP.padLeft(5,'0')
-    outputMap['FullName'] = it.FullName.toUpperCase()
-    outputMap['FooDuration'] = it.FooDuration
-    outputMap['BarDuration'] = it.BarDuration
-    outputMap['TotalDuration'] = it.TotalDuration
     outputMap['Notes'] = it.Notes
-    */
-    /*println "FooDuration" + outputMap.FooDuration
-    println "BarDuration" + outputMap.BarDuration
-    println "TotalDuration" + outputMap.TotalDuration
-*/
-}
 
+    outputSet.add(outputMap.collect { it.value } as String[])
+
+}
+writeCsvFromMap(outputSet)
+
+private writeCsvFromMap(stuffToPrint) {
+    println "Stuff to print   :" + stuffToPrint.size()
+    CSVWriter writer = new CSVWriter(new BufferedWriter(new OutputStreamWriter(System.out)),
+            ',' as char,
+            '"' as char,
+            CSVWriter.DEFAULT_ESCAPE_CHARACTER,
+            CSVWriter.DEFAULT_LINE_END)
+    stuffToPrint.each {
+        //println "Writing " + it
+        writer.writeNext(it)
+        writer.flush();
+    }
+
+}
 
 private String sumDurations(String foo, String bar) {
     convertMillisecondsToHourString(convertToMilliseconds(foo) + convertToMilliseconds(bar))
@@ -89,20 +87,14 @@ private String convertMillisecondsToHourString(int milliseconds) {
 }
 
 private String timeStringToIso(String timeString) {
-    println "timeString             :" + timeString
     ZonedDateTime zonedDateTime = null
     // 4/1/11 11:00:00 AM
     String inputPattern = "M/d/yy h:mm:ss a";
     DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(inputPattern).withZone(ZoneId.of("America/Los_Angeles"))
     zonedDateTime = ZonedDateTime.parse(timeString, dateTimeFormatter);
-    println "zonedDateTime          :" + zonedDateTime
-
-    ZonedDateTime centralEastern = zonedDateTime.withZoneSameInstant(ZoneId.of("America/New_York"));
-    println "centralEastern         :" + centralEastern
-
-
-    println "zonedDateTime ISO-8601 format: " + zonedDateTime.toOffsetDateTime().toString()
-    zonedDateTime.toOffsetDateTime().toString()
+    // So at that instant in LA, what time is it in NY?
+    ZonedDateTime easternDateTime = zonedDateTime.withZoneSameInstant(ZoneId.of("America/New_York"));
+    easternDateTime.toOffsetDateTime().toString()
 }
 
 //checkUTF8()
