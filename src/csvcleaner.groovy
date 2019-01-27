@@ -13,18 +13,20 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 //String filePath = "/home/ed/projects/truss/doc/sample-with-broken-utf8.csv"
+/*
 String filePath = "/home/ed/projects/truss/doc/sample.csv"
 File file = new File(filePath)
 BufferedReader br = null
 br = new BufferedReader(new FileReader(file))
+*/
+
+BufferedReader br = new BufferedReader(new InputStreamReader(System.in))
 def csvData = CsvParser.parseCsv(br)
 //println "csvData      : " + csvData.size()
-String headerLine = "Timestamp,Address,ZIP,FullName,FooDuration,BarDuration,TotalDuration,Notes"
 
 def outputMap = [:]
 def outputSet = []
 csvData.eachWithIndex {it, i ->
-    println "----------  ${i}  --------"
     outputMap['Timestamp'] = timeStringToIso(it.Timestamp)
     outputMap['Address'] = it.Address
     outputMap['ZIP'] = it.ZIP.padLeft(5, '0')
@@ -40,8 +42,11 @@ csvData.eachWithIndex {it, i ->
 writeCsvFromMap(outputSet)
 
 private writeCsvFromMap(stuffToPrint) {
-    println "Stuff to print   :" + stuffToPrint.size()
-    CSVWriter writer = new CSVWriter(new BufferedWriter(new OutputStreamWriter(System.out)),
+    String headerLine = "Timestamp,Address,ZIP,FullName,FooDuration,BarDuration,TotalDuration,Notes\n"
+    BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(System.out))
+    bufferedWriter.write(headerLine)
+    bufferedWriter.flush()
+    CSVWriter writer = new CSVWriter(bufferedWriter,
             ',' as char,
             '"' as char,
             CSVWriter.DEFAULT_ESCAPE_CHARACTER,
