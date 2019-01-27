@@ -12,18 +12,11 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
-//String filePath = "/home/ed/projects/truss/doc/sample-with-broken-utf8.csv"
-/*
-String filePath = "/home/ed/projects/truss/doc/sample.csv"
-File file = new File(filePath)
-BufferedReader br = null
-br = new BufferedReader(new FileReader(file))
-*/
-
+// Read in the csv data
 BufferedReader br = new BufferedReader(new InputStreamReader(System.in))
 def csvData = CsvParser.parseCsv(br)
-//println "csvData      : " + csvData.size()
 
+// transform the data
 def outputMap = [:]
 def outputSet = []
 csvData.eachWithIndex {it, i ->
@@ -39,6 +32,8 @@ csvData.eachWithIndex {it, i ->
     outputSet.add(outputMap.collect { it.value } as String[])
 
 }
+
+// write the output
 writeCsvFromMap(outputSet)
 
 private writeCsvFromMap(stuffToPrint) {
