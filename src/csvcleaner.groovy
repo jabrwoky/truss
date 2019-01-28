@@ -1,16 +1,14 @@
 @Grab('com.opencsv:opencsv:4.0')
 @Grab('com.xlson.groovycsv:groovycsv:1.3')
 import com.opencsv.CSVWriter
+@Grab('com.opencsv:opencsv:4.0')
+@Grab('com.xlson.groovycsv:groovycsv:1.3')
+import com.opencsv.CSVWriter
 import com.xlson.groovycsv.CsvParser
-
 
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
-import java.nio.charset.CharsetDecoder
-import java.nio.charset.CharsetEncoder
-import java.nio.ByteBuffer
-import java.nio.charset.CharacterCodingException
 import java.time.format.DateTimeParseException
 
 // Read in the csv data
@@ -24,9 +22,9 @@ def outputSet = []  // this will hold the final processed dataset
 try {
 
     csvData.findAll { it ->
-        def outputMap = [:]  // I like maps, it's easier to debug
+        def outputMap = [:]
         outputMap['Timestamp'] = timeStringToIso(it.Timestamp)
-        if (!outputMap['Timestamp']) { // something is wrong with the input, skip this line
+        if (!outputMap['Timestamp']) { // something is wrong with the input, skip this line of input
             System.err.println "timeStamp can't be formatted, skipping..."
             return true // go to next line
         }
@@ -52,6 +50,8 @@ try {
 // write the output
 writeCsvFromMap(outputSet)
 
+// Local methods
+
 private writeCsvFromMap(stuffToPrint) {
     String headerLine = "Timestamp,Address,ZIP,FullName,FooDuration,BarDuration,TotalDuration,Notes\n"
     BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(System.out))
@@ -63,7 +63,6 @@ private writeCsvFromMap(stuffToPrint) {
             CSVWriter.DEFAULT_ESCAPE_CHARACTER,
             CSVWriter.DEFAULT_LINE_END)
     stuffToPrint.each {
-        //println "Writing " + it
         writer.writeNext(it)
         writer.flush();
     }
